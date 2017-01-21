@@ -15,9 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import java.util.ArrayList;
 import java.sql.*;
 
@@ -27,8 +24,8 @@ public class SockServ {
 		private int id;
 		private String name;
 		private String number;
-		private ArrayList<User> friendsList;
-		
+		private String[] friendsList;
+
 		public String getName() {
 			return name;
 		}
@@ -45,17 +42,17 @@ public class SockServ {
 			this.number = number;
 		}
 
-		public ArrayList<User> getFriendsList() {
+		public String[] getFriendsList() {
 			return friendsList;
 		}
 
-		public void setFriendsList(ArrayList<User> friendsList) {
+		public void setFriendsList(String[] friendsList) {
 			this.friendsList = friendsList;
 		}
 		
 		public String toString(){
 			StringBuilder str= new StringBuilder();
-			for(User user: this.friendsList){
+			for(String user: this.friendsList){
 				str.append(user.name+","+user.number+";");
 			}
 			return name;
@@ -100,7 +97,7 @@ public class SockServ {
 						continue;
 					}else{
 						if(hashmap.isEmpty()) continue;
-						User[] searchUser = parseForSearch(request);
+						String[] searchUser = parseForSearch(request);
 						if(isFriend(searchUser, hashmap)){
 							responseString = packageTrueReponse();
 						}else{
@@ -206,27 +203,14 @@ public class SockServ {
 	 * associated with the user name
 	 * now search the arraylist for the friend's name
 	 */
-	private static boolean isFriend(User[] searchUser, HashMap<Integer, User> hashmap) {
+	private static boolean isFriend(String[] searchUser, HashMap<Integer, User> hashmap) {
 		for(Map.Entry<Integer, User> e : hashmap.entrySet()){
 			Object key = e.getKey();
 			if(hashmap.get(key).equals(searchUser[0])){
-				return hashmap.get(key).getFriendsList().contains(searchUser[1]);
-				
+				return hashmap.get(key).getFriendsList()
 			}
 		}
 		return false;
-	}
-
-	/*
-	 * breaks string into two users.
-	 * formatting is "user=exampleUser;friend=exampleFriend;"
-	 * take the two names and store them in the array with
-	 * user[0] being the exampleUser and user[1]=exampleFriend
-	 */
-	private static User[] parseForSearch(String request) {
-		User[] userAndFriend = new User[2];
-		// TODO Auto-generated method stub
-		return userAndFriend;
 	}
 
 	/*
@@ -256,7 +240,7 @@ public class SockServ {
 	 * I suggest using regex or some sort of substring cutting only at the first semicolon
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
-	
+
 		private static boolean httpParseRequest(String request) {
 		      //Need cleanup, remove useless code(loop print)
 				String[] split = request.split(";");
