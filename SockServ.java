@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,7 +92,7 @@ public class SockServ {
 					if(addUser){
 						User newUser = parseNewUser(request);
 						if(!hashmap.containsKey(newUser.getId())){
-							hashmap = addUserToHashmap(newUser.getId(), hashmap);
+							hashmap = addUserToHashmap(newUser, hashmap);
 						}
 						updateTable(newUser);
 						updateTable = true;
@@ -188,16 +189,14 @@ public class SockServ {
 	}
 
 	private static String packageFalseResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		return "found=false;";
 	}
 
 	// creates a string which essentially says user was found
 	// string response = "found=true;"
 	// encode http response with this string
 	private static String packageTrueReponse() {
-		// TODO Auto-generated method stub
-		return null;
+		return "found=true;";
 	}
 
 	/*
@@ -208,7 +207,13 @@ public class SockServ {
 	 * now search the arraylist for the friend's name
 	 */
 	private static boolean isFriend(User[] searchUser, HashMap<Integer, User> hashmap) {
-		// TODO Auto-generated method stub
+		for(Map.Entry<Integer, User> e : hashmap.entrySet()){
+			Object key = e.getKey();
+			if(hashmap.get(key).equals(searchUser[0])){
+				return hashmap.get(key).getFriendsList().contains(searchUser[1]);
+				
+			}
+		}
 		return false;
 	}
 
@@ -229,10 +234,9 @@ public class SockServ {
 	 * value is the object itself
 	 * 
 	 */
-	private static HashMap<Integer, User> addUserToHashmap(int i, HashMap<Integer,User> hashmap) {
+	private static HashMap<Integer, User> addUserToHashmap(User newUser, HashMap<Integer,User> hashmap) {
+		hashmap.put(newUser.id, newUser);
 		return hashmap;
-		// TODO Auto-generated method stub
-		
 	}
 
 	/*
