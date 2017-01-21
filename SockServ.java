@@ -209,8 +209,9 @@ public class SockServ {
 	private static boolean isFriend(User[] searchUser, HashMap<Integer, User> hashmap) {
 		for(Map.Entry<Integer, User> e : hashmap.entrySet()){
 			Object key = e.getKey();
-			if(hashmap.get(key).getFriendsList().contains(searchUser[1])){
-				return true;
+			if(hashmap.get(key).equals(searchUser[0])){
+				return hashmap.get(key).getFriendsList().contains(searchUser[1]);
+				
 			}
 		}
 		return false;
