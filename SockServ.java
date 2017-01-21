@@ -241,24 +241,20 @@ public class SockServ {
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
 
-		private static boolean httpParseRequest(String request) {
-		      //Need cleanup, remove useless code(loop print)
-				String[] split = request.split(";");
-		      int len = split.length;
-		      if(len>0){
-		         for(int i=0; i<len; i++){
-		            Pattern p = Pattern.compile("=(.*)");
-		            Matcher m = p.matcher(split[i]);
-		            if (m.find()) {
-		               String check = m.group(1);
-		               if(check.equals("True")==true){
-		                  return true;
-		               }
-		            }
-		         }
-		      }
-		        
-				return false;
+   private static boolean httpParseRequest(String request) {
+		//Need cleanup, remove useless code(loop print)
+		String[] split = request.split(";");
+		int len = split.length;
+		Patern p = Pattern.compile("=(.*)");
+		Matcher m = p.matcher(split[0]);
+		if (m.find()) {
+		   String check = m.group(1);
+		   if(check.equals("True")==true){
+		      return true;
+		   }
 		}
+		
+		return false;
+	}
 
 }
