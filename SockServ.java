@@ -259,7 +259,7 @@ public class SockServ {
 		      int len = split.length;
 		      if(len>0){
 		         for(int i=0; i<len; i++){
-		            Pattern p = Pattern.compile("=(.*?)");
+		            Pattern p = Pattern.compile("=(.*)");
 		            Matcher m = p.matcher(split[i]);
 		            if (m.find()) {
 		               String check = m.group(1);
