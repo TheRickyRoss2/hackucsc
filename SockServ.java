@@ -11,8 +11,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
+<<<<<<< HEAD
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+=======
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+>>>>>>> e23b61cc7b9f1b3c78219d6a15998711c60ec420
 import java.util.ArrayList;
 import java.sql.*;
 
@@ -248,6 +255,7 @@ public class SockServ {
 	 * I suggest using regex or some sort of substring cutting only at the first semicolon
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
+<<<<<<< HEAD
 	
 		private static boolean httpParseRequest(String request) {
 		      //Need cleanup, remove useless code(loop print)
@@ -269,4 +277,25 @@ public class SockServ {
 				return false;
 		}
 
+=======
+	private static boolean httpParseRequest(String request) {
+      //Need cleanup, remove useless code(loop print)
+		String[] split = request.split(";");
+      int len = split.length();
+      if(len>0){
+         for(int i=0; i<len; i++){
+            Pattern p = Pattern.compile("=(.*?)");
+            Matcher m = p.matcher(split[i]);
+            if (m.find()) {
+               String check = m.group(1);
+               if(check.equals("True")==true){
+                  return true;
+               }
+            }
+         }
+      }
+        
+		return false;
+	}
+>>>>>>> e23b61cc7b9f1b3c78219d6a15998711c60ec420
 }
