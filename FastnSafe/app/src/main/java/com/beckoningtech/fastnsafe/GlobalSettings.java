@@ -24,7 +24,8 @@ public class GlobalSettings {
     protected GlobalSettings(Context context){
         this.context = context;
         sharedPreferences = context.getSharedPreferences("name",0);
-        name = sharedPreferences.getString("myName","Unknown");
+        name = sharedPreferences.getString("myName","William Jung");
+        name = "William Jung";
         sharedPreferences = context.getSharedPreferences("numUserAction",0);
         numUserActions = sharedPreferences.getInt("num",0);
         if (numUserActions == 0){

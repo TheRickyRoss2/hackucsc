@@ -1,11 +1,15 @@
 package com.beckoningtech.fastnsafe;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import static com.beckoningtech.fastnsafe.AddressSender.mLatitude;
+import static com.beckoningtech.fastnsafe.AddressSender.mLongitude;
 
 /**
  * Created by William on 1/21/2017.
@@ -41,8 +45,8 @@ public class MessageSender {
         }
         if (userAction.location){
             AddressSender addressSender = new AddressSender(context);
-            String location = addressSender.convertToAddress(addressSender.mLongitude,
-                    addressSender.mLatitude);
+            String location = addressSender.convertToAddress(mLongitude, mLatitude);
+            Log.d("HackUCSC", location);
             stringBuilder.append("Location: ").append(location).append('\n');
         }
         stringBuilder.append(userAction.message);
@@ -54,14 +58,14 @@ public class MessageSender {
         }
         String email =userAction.recipients.get(0).emails.get(0);
         if (email!=""){
-            try {
-                Socket client = new Socket("104.236.164.19",5050);
+          //  try {
+//                Socket client = new Socket("104.236.164.19",5050);
 
-                client.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //TODO: SEND EMAIL KEVIN STUFF
+  //              client.close();
+    //        } catch (IOException e) {
+      //          e.printStackTrace();
+        //    }
+            //TODO: if possible email
         }
     }
 

@@ -3,15 +3,26 @@ package com.beckoningtech.fastnsafe;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new AddressSender(this).execute();
+        try {
+            new AddressSender(this).execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Log.d("hackUCSC", "created AddressSender");
         Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
+        Log.d("HackUCSC","started MainMenuActivity");
     }
 
     @Override

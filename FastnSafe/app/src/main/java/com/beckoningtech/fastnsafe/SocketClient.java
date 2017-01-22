@@ -46,51 +46,51 @@ public class SocketClient {
                 try {
                     clientSocket = new Socket(HOSTIP, PORTNUMBER);
                     Log.d("socketcliententered","afterSocket");
-                } catch (IOException e1) {
-                    try {clientSocket.close();} catch(IOException e) {}
+                    String modifiedSentence = new String("");
+                    try {
+                        BufferedReader inFromUser = new BufferedReader( new InputStreamReader(clientSocket.getInputStream()));
+                    } catch (Exception e) {
+                        Log.d("socketcliententered","Fail1");
+                        e.printStackTrace();
+                    }
+                    DataOutputStream outToServer = null;
+                    try {
+                        outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                    } catch (Exception e) {
+                        Log.d("socketcliententered","Fail2");
+                        e.printStackTrace();
+                    }
+                    BufferedReader inFromServer = null;
+                    try {
+                        inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    } catch (Exception e) {
+                        Log.d("socketcliententered","Fail3");
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        outToServer.writeBytes(test);
+                    } catch (Exception e) {
+                        Log.d("socketcliententered","Fail4");
+                        e.printStackTrace();
+                    }
+                    try {
+                        modifiedSentence = new String(inFromServer.readLine());
+                        serverResponse = modifiedSentence;
+                        clientSocket.close();
+                        // if the user wants the response cuz it contains desired info show in noti
+                        if (wantLocation) {
+                            addNotification(MainMenuActivity.class,12,mContext,"Kid is here:", serverResponse);
+                        }
+                    } catch (Exception e) {
+                        Log.d("socketcliententered","Fail5");
+                        e.printStackTrace();
+                    }
+                } catch (Exception e1) {
                     Log.d("socketcliententered","oops server nonexistant");
                 }
 
-                String modifiedSentence = new String("");
-                try {
-                    BufferedReader inFromUser = new BufferedReader( new InputStreamReader(clientSocket.getInputStream()));
-                } catch (IOException e) {
-                    Log.d("socketcliententered","Fail1");
-                    e.printStackTrace();
-                }
-                DataOutputStream outToServer = null;
-                try {
-                    outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                } catch (IOException e) {
-                    Log.d("socketcliententered","Fail2");
-                    e.printStackTrace();
-                }
-                BufferedReader inFromServer = null;
-                try {
-                    inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                } catch (IOException e) {
-                    Log.d("socketcliententered","Fail3");
-                    e.printStackTrace();
-                }
 
-                try {
-                    outToServer.writeBytes(test);
-                } catch (IOException e) {
-                    Log.d("socketcliententered","Fail4");
-                    e.printStackTrace();
-                }
-                try {
-                    modifiedSentence = new String(inFromServer.readLine());
-                    serverResponse = modifiedSentence;
-                    clientSocket.close();
-                    // if the user wants the response cuz it contains desired info show in noti
-                    if (wantLocation) {
-                        addNotification(MainActivity.class,12,mContext,"Kid is here:", serverResponse);
-                    }
-                } catch (IOException e) {
-                    Log.d("socketcliententered","Fail5");
-                    e.printStackTrace();
-                }
 
             }
         }).start();

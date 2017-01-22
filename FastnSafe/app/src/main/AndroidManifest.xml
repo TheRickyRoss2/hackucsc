@@ -40,7 +40,11 @@
         <activity
             android:name=".SelectMenuActivity"
             android:label="@string/title_activity_select_menu"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+            android:parentActivityName=".MainMenuActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.beckoningtech.fastnsafe.MainMenuActivity" /></activity>
     </application>
 
 </manifest>

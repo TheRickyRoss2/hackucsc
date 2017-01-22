@@ -51,10 +51,11 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
 
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
+    private static Location mLastLocation;
     public static double mLatitude;
     public static double mLongitude;
-    private Boolean failed;
+    private Boolean failed = false;
+    private static Boolean alreadyRan = false; // determine if initialization has already been done
 
     AddressSender(Context context) {
         mContext = context;
@@ -77,7 +78,7 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
 //        String out = convertToAddress(mLongitude,mLatitude);
         String out = "pushLoc;5555234259;" + convertToAddress(mLongitude,mLatitude) + ";\n";
         // For demo purposes instead of using convertToAddr we shall use the string above
-        Log.d("ConnectedYo!", out);
+        Log.d("HackUCSC", out);
         sendMessage(out, false, mContext);
     }
 
@@ -113,16 +114,18 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
 
     @Override
     protected Void doInBackground(Void... voids) {
-        // Initialize all the variables
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+        if(!alreadyRan) {
+            // Initialize all the variables
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+            }
+            new TestForDC(mGoogleApiClient);
+            alreadyRan=true;
         }
-        new TestForDC(mGoogleApiClient);
-
         return null;
     }
 }
