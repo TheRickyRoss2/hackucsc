@@ -49,7 +49,8 @@ public class SockServ {
 		public void setFriendsList(String[] friendsList) {
 			this.friendsList = friendsList;
 		}
-		
+
+		/*
 		public String toString(){
 			StringBuilder str= new StringBuilder();
 			for(String user: this.friendsList){
@@ -57,7 +58,7 @@ public class SockServ {
 			}
 			return name;
 			
-		}
+		}*/
 
 		public int getId() {
 			return this.id;
@@ -231,7 +232,31 @@ public class SockServ {
 	
 	private static User parseNewUser(String request) {
 		// TODO Auto-generated method stub
-		return null;
+		User newUser = new User();	//Create New User
+
+		String[] split = request.split(";");	//Split String and declare friends String array
+		int len = split.length;
+		newUser.friendsList = new String[len-2];
+
+		Pattern p = Pattern.compile("=(.*)"); //Give name field
+		Matcher m = p.matcher(split[0]);
+		if(m.find()) {
+			newUser.name = m.group(1);
+			System.out.println(newUser.name);
+		}
+		m = p.matcher(split[1]); //Give number field
+		if(m.find()) {
+			newUser.number = m.group(1);
+			System.out.println(newUser.number);
+		}
+		for (int i = 2; i < len; i++) {		//Give friend string array field
+			m = p.matcher(split[i]);
+			if (m.find()) {
+				newUser.friendsList[i-2] = m.group(1);
+				System.out.println(newUser.friendsList[i-2]);
+			}
+		}
+		return newUser;
 	}
 
 	/*
