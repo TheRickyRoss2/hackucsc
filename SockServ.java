@@ -260,7 +260,7 @@ public class SockServ implements SockServInterface{
 
 	/*
 	 * breaks string into user object with the following format
-	 * "username=exampleUsername;number=1234567890;numberOfFriends=3;friend=friend1,1234567890;friend=friend2,2346573451;friend=friend3,6789123454;"
+	 * "username=exampleUsername;number=1234567890;friend=friend1,1234567890;friend=friend2,2346573451;friend=friend3,6789123454;"
 	 *  I suggest separating by semicolon, and when you get to the friends part strip everything before the equals and substring using comma
 	 */
 	
