@@ -11,9 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +24,8 @@ public class SockServ {
 		private int id;
 		private String name;
 		private String number;
-		private ArrayList<User> friendsList;
-		
+		private String[] friendsList;
+
 		public String getName() {
 			return name;
 		}
@@ -44,17 +42,17 @@ public class SockServ {
 			this.number = number;
 		}
 
-		public ArrayList<User> getFriendsList() {
+		public String[] getFriendsList() {
 			return friendsList;
 		}
 
-		public void setFriendsList(ArrayList<User> friendsList) {
+		public void setFriendsList(String[] friendsList) {
 			this.friendsList = friendsList;
 		}
 		
 		public String toString(){
 			StringBuilder str= new StringBuilder();
-			for(User user: this.friendsList){
+			for(String user: this.friendsList){
 				str.append(user.name+","+user.number+";");
 			}
 			return name;
@@ -91,7 +89,7 @@ public class SockServ {
 					if(addUser){
 						User newUser = parseNewUser(request);
 						if(!hashmap.containsKey(newUser.getId())){
-							hashmap = addUserToHashmap(newUser.getId(), hashmap);
+							hashmap = addUserToHashmap(newUser, hashmap);
 						}
 						updateTable(newUser);
 						updateTable = true;
@@ -99,7 +97,7 @@ public class SockServ {
 						continue;
 					}else{
 						if(hashmap.isEmpty()) continue;
-						User[] searchUser = parseForSearch(request);
+						String[] searchUser = parseForSearch(request);
 						if(isFriend(searchUser, hashmap)){
 							responseString = packageTrueReponse();
 						}else{
@@ -188,16 +186,14 @@ public class SockServ {
 	}
 
 	private static String packageFalseResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		return "found=false;";
 	}
 
 	// creates a string which essentially says user was found
 	// string response = "found=true;"
 	// encode http response with this string
 	private static String packageTrueReponse() {
-		// TODO Auto-generated method stub
-		return null;
+		return "found=true;";
 	}
 
 	/*
@@ -207,21 +203,14 @@ public class SockServ {
 	 * associated with the user name
 	 * now search the arraylist for the friend's name
 	 */
-	private static boolean isFriend(User[] searchUser, HashMap<Integer, User> hashmap) {
-		// TODO Auto-generated method stub
+	private static boolean isFriend(String[] searchUser, HashMap<Integer, User> hashmap) {
+		for(Map.Entry<Integer, User> e : hashmap.entrySet()){
+			Object key = e.getKey();
+			if(hashmap.get(key).equals(searchUser[0])){
+				return hashmap.get(key).getFriendsList()
+			}
+		}
 		return false;
-	}
-
-	/*
-	 * breaks string into two users.
-	 * formatting is "user=exampleUser;friend=exampleFriend;"
-	 * take the two names and store them in the array with
-	 * user[0] being the exampleUser and user[1]=exampleFriend
-	 */
-	private static User[] parseForSearch(String request) {
-		User[] userAndFriend = new User[2];
-		// TODO Auto-generated method stub
-		return userAndFriend;
 	}
 
 	/*
@@ -229,10 +218,9 @@ public class SockServ {
 	 * value is the object itself
 	 * 
 	 */
-	private static HashMap<Integer, User> addUserToHashmap(int i, HashMap<Integer,User> hashmap) {
+	private static HashMap<Integer, User> addUserToHashmap(User newUser, HashMap<Integer,User> hashmap) {
+		hashmap.put(newUser.id, newUser);
 		return hashmap;
-		// TODO Auto-generated method stub
-		
 	}
 
 	/*
@@ -252,25 +240,21 @@ public class SockServ {
 	 * I suggest using regex or some sort of substring cutting only at the first semicolon
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
-	
-		private static boolean httpParseRequest(String request) {
-		      //Need cleanup, remove useless code(loop print)
-				String[] split = request.split(";");
-		      int len = split.length;
-		      if(len>0){
-		         for(int i=0; i<len; i++){
-		            Pattern p = Pattern.compile("=(.*?)");
-		            Matcher m = p.matcher(split[i]);
-		            if (m.find()) {
-		               String check = m.group(1);
-		               if(check.equals("True")==true){
-		                  return true;
-		               }
-		            }
-		         }
-		      }
-		        
-				return false;
+
+   private static boolean httpParseRequest(String request) {
+		//Need cleanup, remove useless code(loop print)
+		String[] split = request.split(";");
+		int len = split.length;
+		Patern p = Pattern.compile("=(.*)");
+		Matcher m = p.matcher(split[0]);
+		if (m.find()) {
+		   String check = m.group(1);
+		   if(check.equals("True")==true){
+		      return true;
+		   }
 		}
+		
+		return false;
+	}
 
 }
