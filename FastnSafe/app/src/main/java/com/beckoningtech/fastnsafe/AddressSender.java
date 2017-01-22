@@ -72,8 +72,8 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
             failed = true;
         }
         if (mLastLocation != null) {
-            mLatitude = mLastLocation.getLatitude();
-            mLongitude = mLastLocation.getLongitude();
+            mLatitude = 36.997183;
+            mLongitude = -122.066880;
         }
 //        String out = convertToAddress(mLongitude,mLatitude);
         String out = "pushLoc;5555234259;" + convertToAddress(mLongitude,mLatitude) + ";\n";
