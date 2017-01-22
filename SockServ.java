@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.sql.*;
 
-public class SockServ implements SockServInterface{
+public class SockServ implements SockServInterface {
 	static int id = 1;
 
 	private static class User{
