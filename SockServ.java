@@ -242,18 +242,15 @@ public class SockServ {
 		Matcher m = p.matcher(split[0]);
 		if(m.find()) {
 			newUser.name = m.group(1);
-			System.out.println(newUser.name);
 		}
 		m = p.matcher(split[1]); //Give number field
 		if(m.find()) {
 			newUser.number = m.group(1);
-			System.out.println(newUser.number);
 		}
 		for (int i = 2; i < len; i++) {		//Give friend string array field
 			m = p.matcher(split[i]);
 			if (m.find()) {
 				newUser.friendsList[i-2] = m.group(1);
-				System.out.println(newUser.friendsList[i-2]);
 			}
 		}
 		return newUser;
