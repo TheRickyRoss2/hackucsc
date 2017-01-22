@@ -49,7 +49,8 @@ public class SockServ {
 		public void setFriendsList(String[] friendsList) {
 			this.friendsList = friendsList;
 		}
-		
+
+		/*
 		public String toString(){
 			StringBuilder str= new StringBuilder();
 			for(String user: this.friendsList){
@@ -57,7 +58,7 @@ public class SockServ {
 			}
 			return name;
 			
-		}
+		}*/
 
 		public int getId() {
 			return this.id;
@@ -230,8 +231,29 @@ public class SockServ {
 	 */
 	
 	private static User parseNewUser(String request) {
-		// TODO Auto-generated method stub
-		return null;
+		User newUser = new User();	//Create New User
+
+		String[] split = request.split(";");	//Split String and declare friends String array
+		int len = split.length;
+		newUser.friendsList = new String[len-2];
+      
+      //Field input
+		Pattern p = Pattern.compile("=(.*)"); //Give name field
+		Matcher m = p.matcher(split[0]);
+		if(m.find()) {
+			newUser.name = m.group(1);
+		}
+		m = p.matcher(split[1]); //Give number field
+		if(m.find()) {
+			newUser.number = m.group(1);
+		}
+		for (int i = 2; i < len; i++) {		//Give friend string array field
+			m = p.matcher(split[i]);
+			if (m.find()) {
+				newUser.friendsList[i-2] = m.group(1);
+			}
+		}
+		return newUser;
 	}
 
 	/*
@@ -241,24 +263,19 @@ public class SockServ {
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
 
-		private static boolean httpParseRequest(String request) {
-		      //Need cleanup, remove useless code(loop print)
-				String[] split = request.split(";");
-		      int len = split.length;
-		      if(len>0){
-		         for(int i=0; i<len; i++){
-		            Pattern p = Pattern.compile("=(.*?)");
-		            Matcher m = p.matcher(split[i]);
-		            if (m.find()) {
-		               String check = m.group(1);
-		               if(check.equals("True")==true){
-		                  return true;
-		               }
-		            }
-		         }
-		      }
-		        
-				return false;
+   private static boolean httpParseRequest(String request) {
+		String[] split = request.split(";"); //Split string to array by semi-colon
+		int len = split.length;
+		Patern p = Pattern.compile("=(.*)");//create group after "=" to get value
+		Matcher m = p.matcher(split[0]);
+		if (m.find()) {
+		   String check = m.group(1);
+		   if(check.equals("True")==true){//Check if request is true or false
+		      return true;
+		   }
 		}
+		
+		return false;
+	}
 
 }
