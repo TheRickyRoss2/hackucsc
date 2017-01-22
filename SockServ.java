@@ -20,6 +20,7 @@ import java.sql.*;
 
 public class SockServ {
 	static int id = 1;
+
 	private static class User{
 		private int id;
 		private String name;
@@ -49,14 +50,14 @@ public class SockServ {
 		public void setFriendsList(String[] friendsList) {
 			this.friendsList = friendsList;
 		}
-		
+
 		public String toString(){
 			StringBuilder str= new StringBuilder();
 			for(String user: this.friendsList){
-				str.append(user.name+","+user.number+";");
+				str.append(user+";");
 			}
 			return name;
-			
+
 		}
 
 		public int getId() {
@@ -70,8 +71,9 @@ public class SockServ {
 	
 	public static void main(String[] args)throws IOException{
 		HashMap<Integer, User> hashmap = new HashMap<>();
+		HashMap<String, String> locations = new HashMap<>();
 		ServerSocket listener = new ServerSocket(9090);
-		boolean updateTable = false;
+		boolean updateTable = true;
 		try{
 			while(true){
 				if(updateTable){
@@ -85,8 +87,15 @@ public class SockServ {
 					ois.close();
 					
 					String responseString;
-					boolean addUser = httpParseRequest(request);
-					if(addUser){
+					if(parseForUpdate(request)){
+						updateLocation(locations, request);
+						continue;
+					}
+					if(locationParse(request)){
+						sendLocation(request);
+						continue;
+					}
+					if(httpParseRequest(request)){
 						User newUser = parseNewUser(request);
 						if(!hashmap.containsKey(newUser.getId())){
 							hashmap = addUserToHashmap(newUser, hashmap);
@@ -97,8 +106,7 @@ public class SockServ {
 						continue;
 					}else{
 						if(hashmap.isEmpty()) continue;
-						String[] searchUser = parseForSearch(request);
-						if(isFriend(searchUser, hashmap)){
+						if(isFriend(request, hashmap)){
 							responseString = packageTrueReponse();
 						}else{
 							responseString = packageFalseResponse();
@@ -120,11 +128,31 @@ public class SockServ {
 		listener.close();
 	}
 
+	private static void updateLocation(HashMap<String, String> locations, String request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static boolean parseForUpdate(String request) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private static void sendLocation(String request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static boolean locationParse(String request) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	private static HashMap<Integer, User> loadHashMap() {
 		HashMap<Integer, User> hashmap = new HashMap<>();
 		try{
 			String myDriver = "org.gjt.mm.mysql.Driver";
-			String myUrl = "jdbc:mysql://localhost/test";
+			String myUrl = "jdbc:mysql://localhost/pinger";
 			Class.forName(myDriver);
 			Connection conn = DriverManager.getConnection(myUrl, "root", "HackUCSC$@2017");
 			String query = "SELECT * FROM users";
@@ -136,19 +164,18 @@ public class SockServ {
 				String name = rs.getString("name");
 				String phone = rs.getString("phone_number");
 				String friends = rs.getString("friends");
-				ArrayList<User> list = new ArrayList<>();
 				String[] friendsSplit = friends.split(";");
-				for(String user:friendsSplit){
-					String[] userSplit = user.split(",");
-					User newUser = new User();
-					newUser.setId(id);
-					newUser.setName(userSplit[0]);
-					newUser.setNumber(userSplit[1]);
-					list.add(newUser);
-					hashmap.put(newUser.id, newUser);
-					
+				User newUser = new User();
+				newUser.setId(id);
+				newUser.setName(name);
+				newUser.setNumber(phone);
+				
+				newUser.friendsList = friendsSplit.clone();
+				
+				hashmap.put(newUser.id, newUser);
+				
 				}
-			}
+				
 			st.close();
 		}
 		catch(Exception e)
@@ -162,7 +189,7 @@ public class SockServ {
 	private static void updateTable(User newUser) {
 		try{
 			String myDriver = "org.gjt.mm.mysql.Driver";
-			String myUrl = "jdbc:mysql://localhost/test";
+			String myUrl = "jdbc:mysql://localhost/pinger";
 			Class.forName(myDriver);
 			Connection conn = DriverManager.getConnection(myUrl, "root", "HackUCSC$@2017");
 			String query = "insert into users (id, name, phone_number, friends)"
@@ -172,8 +199,8 @@ public class SockServ {
 			preparedStmt.setString(2, newUser.name);
 			preparedStmt.setString(3,newUser.number);
 			StringBuilder arr = new StringBuilder();
-			for(User user: newUser.friendsList){
-				arr.append(user.toString());
+			for(String user: newUser.friendsList){
+				arr.append(user+";");
 			}
 			preparedStmt.setString(4, arr.toString());
 			preparedStmt.executeQuery();
@@ -203,12 +230,16 @@ public class SockServ {
 	 * associated with the user name
 	 * now search the arraylist for the friend's name
 	 */
-	private static boolean isFriend(String[] searchUser, HashMap<Integer, User> hashmap) {
-		for(Map.Entry<Integer, User> e : hashmap.entrySet()){
-			Object key = e.getKey();
-			if(hashmap.get(key).equals(searchUser[0])){
-				return hashmap.get(key).getFriendsList()
-			}
+	private static boolean isFriend(String request, HashMap<Integer, User> hashmap) {
+		//parse msg to id and phone number 
+		String msg = request.substring(7);
+		int id;
+		String phone;
+		String[] message = msg.split(",");
+		id=Integer.parseInt(message[0]);
+		phone = message[1];
+		if(hashmap.containsKey(id)){
+			return hashmap.get(id).friendsList.toString().contains(phone);
 		}
 		return false;
 	}
@@ -230,8 +261,29 @@ public class SockServ {
 	 */
 	
 	private static User parseNewUser(String request) {
-		// TODO Auto-generated method stub
-		return null;
+		User newUser = new User();	//Create New User
+
+		String[] split = request.split(";");	//Split String and declare friends String array
+		int len = split.length;
+		newUser.friendsList = new String[len-2];
+      
+      //Field input
+		Pattern p = Pattern.compile("=(.*)"); //Give name field
+		Matcher m = p.matcher(split[0]);
+		if(m.find()) {
+			newUser.name = m.group(1);
+		}
+		m = p.matcher(split[1]); //Give number field
+		if(m.find()) {
+			newUser.number = m.group(1);
+		}
+		for (int i = 2; i < len; i++) {		//Give friend string array field
+			m = p.matcher(split[i]);
+			if (m.find()) {
+				newUser.friendsList[i-2] = m.group(1);
+			}
+		}
+		return newUser;
 	}
 
 	/*
@@ -241,24 +293,19 @@ public class SockServ {
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
 
-		private static boolean httpParseRequest(String request) {
-		      //Need cleanup, remove useless code(loop print)
-				String[] split = request.split(";");
-		      int len = split.length;
-		      if(len>0){
-		         for(int i=0; i<len; i++){
-		            Pattern p = Pattern.compile("=(.*?)");
-		            Matcher m = p.matcher(split[i]);
-		            if (m.find()) {
-		               String check = m.group(1);
-		               if(check.equals("True")==true){
-		                  return true;
-		               }
-		            }
-		         }
-		      }
-		        
-				return false;
+	private static boolean httpParseRequest(String request) {
+		String[] split = request.split(";"); //Split string to array by semi-colon
+		int len = split.length;
+		Pattern p = Pattern.compile("=(.*)");//create group after "=" to get value
+		Matcher m = p.matcher(split[0]);
+		if (m.find()) {
+		   String check = m.group(1);
+		   if(check.equals("True")==true){//Check if request is true or false
+		      return true;
+		   }
 		}
+		
+		return false;
+	}
 
 }
