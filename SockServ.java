@@ -120,13 +120,13 @@ public class SockServ {
 					oos.close();
 					
 				}catch(IOException e){
-					System.out.println("Error");
+					System.out.println("Error could not make socket");
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
 			}
 		}catch(IOException e){
-			System.out.println("Error");
+			System.out.println("Error in outer while");
 		}
 		listener.close();
 	}
