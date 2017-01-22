@@ -4,8 +4,6 @@ public interface SockServInterface{
    
    public static void updateLocation(HashMap<String, String> locations, String request);
    
-   public static boolean parseForUpdate(String request);
-   
    public static void sendLocation(String request);
    
    public static boolean locationParse(String request)

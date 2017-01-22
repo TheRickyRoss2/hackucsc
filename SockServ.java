@@ -130,23 +130,24 @@ public class SockServ implements SockServInterface{
 		}
 		listener.close();
 	}
-
+   
+   //store values into table
 	public static void updateLocation(HashMap<String, String> locations, String request) {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public static boolean parseForUpdate(String request) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static void sendLocation(String request) {
+   
+   //Request location based off phone number
+   //This function will search table for location
+   //request = "1234567890" phone number
+	public static String sendLocation(String request) {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public static boolean locationParse(String request) {
+   
+   //This function will take in a location and phone number
+   //Stores location based off phone number
+	public static void locationParse(String request) {
 		// TODO Auto-generated method stub
 		return false;
 	}
