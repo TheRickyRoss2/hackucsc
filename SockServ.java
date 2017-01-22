@@ -231,13 +231,13 @@ public class SockServ {
 	 */
 	
 	private static User parseNewUser(String request) {
-		// TODO Auto-generated method stub
 		User newUser = new User();	//Create New User
 
 		String[] split = request.split(";");	//Split String and declare friends String array
 		int len = split.length;
 		newUser.friendsList = new String[len-2];
-
+      
+      //Field input
 		Pattern p = Pattern.compile("=(.*)"); //Give name field
 		Matcher m = p.matcher(split[0]);
 		if(m.find()) {
@@ -264,14 +264,13 @@ public class SockServ {
 	 */
 
    private static boolean httpParseRequest(String request) {
-		//Need cleanup, remove useless code(loop print)
-		String[] split = request.split(";");
+		String[] split = request.split(";"); //Split string to array by semi-colon
 		int len = split.length;
-		Patern p = Pattern.compile("=(.*)");
+		Patern p = Pattern.compile("=(.*)");//create group after "=" to get value
 		Matcher m = p.matcher(split[0]);
 		if (m.find()) {
 		   String check = m.group(1);
-		   if(check.equals("True")==true){
+		   if(check.equals("True")==true){//Check if request is true or false
 		      return true;
 		   }
 		}
