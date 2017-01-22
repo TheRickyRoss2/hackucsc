@@ -1,6 +1,7 @@
 package com.hackucsc;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -79,32 +80,36 @@ public class SockServ {
 		boolean updateTable = true;
 		try{
 			while(true){
-				if(updateTable){
-					hashmap = loadHashMap();
-					updateTable = false;
-				}
+				//if(updateTable){
+					//hashmap = loadHashMap();
+					//updateTable = false;
+				//}
 				Socket socket = listener.accept();
 				try{
-					ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-					String request = (String) ois.readObject();
-					ois.close();
-					
-					String responseString;
-					if(parseForUpdate(request)){
+					//ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+					//String request = (String) ois.readObject();
+					//ois.close();
+					BufferedReader inFromClient =
+				               new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		            DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
+		            String request = inFromClient.readLine();
+		            String responseString;
+		            /*if(parseForUpdate(request)){
 						updateLocation(locations, request);
 						continue;
 					}
-					if(locationParse(request)){
+					if(!parseForUpdate(request)){
 						sendLocation(request);
 						continue;
-					}
+					}*/
 					if(httpParseRequest(request)){
-						User newUser = parseNewUser(request);
+						String payload = request.substring(13, request.length());
+						User newUser = parseNewUser(payload);
 						if(!hashmap.containsKey(newUser.getId())){
 							hashmap = addUserToHashmap(newUser, hashmap);
 						}
-						updateTable(newUser);
-						updateTable = true;
+						//updateTable(newUser);
+						//updateTable = true;
 						id++;
 						continue;
 					}else{
@@ -115,16 +120,16 @@ public class SockServ {
 							responseString = packageFalseResponse();
 						}
 					}
-					ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+					/*ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 					oos.writeObject(responseString);
 					oos.close();
-					
+					*/
+					outToClient.writeBytes(responseString);
 				}catch(IOException e){
 					System.out.println("Error could not make socket");
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
 				}
 			}
+			
 		}catch(IOException e){
 			System.out.println("Error in outer while");
 		}
@@ -150,7 +155,7 @@ public class SockServ {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+/*
 	private static HashMap<Integer, User> loadHashMap() {
 		HashMap<Integer, User> hashmap = new HashMap<>();
 		try{
@@ -161,7 +166,6 @@ public class SockServ {
 			String query = "SELECT * FROM users";
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(query);
-			
 			while(rs.next()){
 				int id = rs.getInt("id");
 				String name = rs.getString("name");
@@ -211,19 +215,19 @@ public class SockServ {
 		}
 		catch(Exception e)
 		{
-			System.out.println("Error");
+			System.out.println(e);
 		}
 	}
-
+*/
 	private static String packageFalseResponse() {
-		return "found=false;";
+		return "found=false;\n";
 	}
 
 	// creates a string which essentially says user was found
 	// string response = "found=true;"
 	// encode http response with this string
 	private static String packageTrueReponse() {
-		return "found=true;";
+		return "found=true;\n";
 	}
 
 	/*
@@ -235,14 +239,19 @@ public class SockServ {
 	 */
 	private static boolean isFriend(String request, HashMap<Integer, User> hashmap) {
 		//parse msg to id and phone number 
-		String msg = request.substring(7);
+		
+		String msg = request.substring(17);
 		int id;
-		String phone;
-		String[] message = msg.split(",");
+		String[] message = msg.split(";");
 		id=Integer.parseInt(message[0]);
-		phone = message[1];
+		String[] str = message[1].split(",");
+		String phone = str[1];
 		if(hashmap.containsKey(id)){
-			return hashmap.get(id).friendsList.toString().contains(phone);
+			User kek = hashmap.get(id);
+			for(String checker: kek.friendsList){
+				if(checker.contains(phone))
+						return true;
+			}
 		}
 		return false;
 	}
@@ -265,6 +274,7 @@ public class SockServ {
 	
 	private static User parseNewUser(String request) {
 		User newUser = new User();	//Create New User
+		newUser.id = id;
 
 		String[] split = request.split(";");	//Split String and declare friends String array
 		int len = split.length;
