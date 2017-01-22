@@ -51,14 +51,23 @@ public class SockServ {
 			this.friendsList = friendsList;
 		}
 
+<<<<<<< HEAD
+=======
+		/*
+>>>>>>> 066d1c4dc62f70ab0fe27b718b3913996f2ada61
 		public String toString(){
 			StringBuilder str= new StringBuilder();
 			for(String user: this.friendsList){
 				str.append(user+";");
 			}
 			return name;
+<<<<<<< HEAD
 
 		}
+=======
+			
+		}*/
+>>>>>>> 066d1c4dc62f70ab0fe27b718b3913996f2ada61
 
 		public int getId() {
 			return this.id;
@@ -293,10 +302,17 @@ public class SockServ {
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
 
+<<<<<<< HEAD
 	private static boolean httpParseRequest(String request) {
 		String[] split = request.split(";"); //Split string to array by semi-colon
 		int len = split.length;
 		Pattern p = Pattern.compile("=(.*)");//create group after "=" to get value
+=======
+   private static boolean httpParseRequest(String request) {
+		String[] split = request.split(";"); //Split string to array by semi-colon
+		int len = split.length;
+		Patern p = Pattern.compile("=(.*)");//create group after "=" to get value
+>>>>>>> 066d1c4dc62f70ab0fe27b718b3913996f2ada61
 		Matcher m = p.matcher(split[0]);
 		if (m.find()) {
 		   String check = m.group(1);
