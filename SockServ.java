@@ -1,4 +1,3 @@
-package com.hackucsc;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -21,6 +20,10 @@ import java.sql.*;
 
 public class SockServ {
 	static int id = 1;
+	private static final String dbClassName = "com.mysql.jdbc.Driver";
+	private static final String CONNECTION = "jdbc:mysql://127.0.0.1/pinger";
+	private static final String USER = "root";
+	private static final String PASS = "HackUCSC$2017";
 
 	private static class User {
 		private int id;
@@ -77,10 +80,10 @@ public class SockServ {
 		boolean updateTable = true;
 		try {
 			while (true) {
-				// if(updateTable){
-				// hashmap = loadHashMap();
-				// updateTable = false;
-				// }
+				if(updateTable){
+				 hashmap = loadHashMap();
+				 updateTable = false;
+				 }
 				Socket socket = listener.accept();
 				try {
 					// ObjectInputStream ois = new
@@ -120,8 +123,8 @@ public class SockServ {
 						if (!hashmap.containsKey(newUser.getId())) {
 							hashmap = addUserToHashmap(newUser, hashmap);
 						}
-						// updateTable(newUser);
-						// updateTable = true;
+						updateTable(newUser);
+						 updateTable = true;
 						id++;
 						continue;
 					} else {
@@ -182,54 +185,66 @@ public class SockServ {
 		return locations;
 	}
 
-	// Request location based off phone number
-	// This function will search table for location
-	// request = "1234567890" phone number
-	/*
-	 * public static String sendLocation(String request) { // TODO
-	 * Auto-generated method stub return }
-	 * 
-	 * //This function will take in a location and phone number //Stores
-	 * location based off phone number public static void locationParse(String
-	 * request) { // TODO Auto-generated method stub return; } /* private static
-	 * HashMap<Integer, User> loadHashMap() { =======
-	 * 
-	 * public static HashMap<Integer, User> loadHashMap() { HashMap<Integer,
-	 * User> hashmap = new HashMap<>(); try{ String myDriver =
-	 * "org.gjt.mm.mysql.Driver"; String myUrl =
-	 * "jdbc:mysql://localhost/pinger"; Class.forName(myDriver); Connection conn
-	 * = DriverManager.getConnection(myUrl, "root", "HackUCSC$@2017"); String
-	 * query = "SELECT * FROM users"; Statement st = conn.createStatement();
-	 * ResultSet rs = st.executeQuery(query); while(rs.next()){ int id =
-	 * rs.getInt("id"); String name = rs.getString("name"); String phone =
-	 * rs.getString("phone_number"); String friends = rs.getString("friends");
-	 * String[] friendsSplit = friends.split(";"); User newUser = new User();
-	 * newUser.setId(id); newUser.setName(name); newUser.setNumber(phone);
-	 * 
-	 * newUser.friendsList = friendsSplit.clone();
-	 * 
-	 * hashmap.put(newUser.id, newUser);
-	 * 
-	 * }
-	 * 
-	 * st.close(); } catch(Exception e) { System.out.println("Error"); } return
-	 * hashmap; }
-	 * 
-	 * 
-	 * public static void updateTable(User newUser) { try{ String myDriver =
-	 * "org.gjt.mm.mysql.Driver"; String myUrl =
-	 * "jdbc:mysql://localhost/pinger"; Class.forName(myDriver); Connection conn
-	 * = DriverManager.getConnection(myUrl, "root", "HackUCSC$@2017"); String
-	 * query = "insert into users (id, name, phone_number, friends)" +
-	 * " values (?, ?, ?, ?)"; PreparedStatement preparedStmt =
-	 * conn.prepareStatement(query); preparedStmt.setInt(1, newUser.id);
-	 * preparedStmt.setString(2, newUser.name);
-	 * preparedStmt.setString(3,newUser.number); StringBuilder arr = new
-	 * StringBuilder(); for(String user: newUser.friendsList){
-	 * arr.append(user+";"); } preparedStmt.setString(4, arr.toString());
-	 * preparedStmt.executeQuery(); conn.close(); } catch(Exception e) {
-	 * System.out.println(e); } } <<<<<<< HEAD
-	 */
+	public static void updateTable(User newUser){
+		Connection conn = null;
+		Statement stmt = null;
+		try{
+			try{ Class.forName(dbClassName);
+			}catch(Exception e){
+			}
+			conn = DriverManager.getConnection(CONNECTION, USER, PASS);
+			String query = "insert into users (id, name, phone_number, friends)" +
+				" values (?, ?, ?, ?)"; 
+			PreparedStatement preparedStmt =conn.prepareStatement(query); 
+			preparedStmt.setInt(1, newUser.id);
+	 		preparedStmt.setString(2, newUser.name);
+	  		preparedStmt.setString(3,newUser.number); 
+	  		StringBuilder arr = new StringBuilder(); 
+	  		for(String user: newUser.friendsList){
+	 			 arr.append(user+";");
+	 		} 
+	 		preparedStmt.setString(4, arr.toString());
+	  		preparedStmt.executeQuery(); 
+	  		conn.close();
+		}catch(SQLException se){
+			se.printStackTrace();
+		}
+	}
+
+	public static HashMap<Integer, User> loadHashMap() {
+		HashMap<Integer, User> hashmap = new HashMap<>();
+		try {
+			Class.forName(dbClassName);
+			System.out.println("Loaded driver");
+			Connection conn = DriverManager.getConnection(CONNECTION, USER, PASS);
+			System.out.println("connected");
+			String query = "SELECT * FROM users";
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				String phone = rs.getString("phone_number");
+				String friends = rs.getString("friends");
+				String[] friendsSplit = friends.split(";");
+				User newUser = new User();
+				newUser.setId(id);
+				newUser.setName(name);
+				newUser.setNumber(phone);
+
+				newUser.friendsList = friendsSplit.clone();
+
+				hashmap.put(newUser.id, newUser);
+
+			}
+
+			st.close();
+		} catch (Exception e) {
+			System.out.println("Error loading sql");
+		}
+		return hashmap;
+	}
+
 	public static String packageFalseResponse() {
 		return "found=false;\n";
 	}
@@ -340,3 +355,4 @@ public class SockServ {
 	}
 
 }
+
