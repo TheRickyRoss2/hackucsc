@@ -135,28 +135,32 @@ public class SockServ {
 		}
 		listener.close();
 	}
-
-	private static void updateLocation(HashMap<String, String> locations, String request) {
+   
+   //store values into table
+	public static void updateLocation(HashMap<String, String> locations, String request) {
 		// TODO Auto-generated method stub
 		
 	}
-
-	private static boolean parseForUpdate(String request) {
+   
+   //Request location based off phone number
+   //This function will search table for location
+   //request = "1234567890" phone number
+	/*public static String sendLocation(String request) {
 		// TODO Auto-generated method stub
-		return false;
+		return
 	}
-
-	private static void sendLocation(String request) {
+   
+   //This function will take in a location and phone number
+   //Stores location based off phone number
+	public static void locationParse(String request) {
 		// TODO Auto-generated method stub
-		
-	}
-
-	private static boolean locationParse(String request) {
-		// TODO Auto-generated method stub
-		return false;
+		return;
 	}
 /*
 	private static HashMap<Integer, User> loadHashMap() {
+=======
+
+	public static HashMap<Integer, User> loadHashMap() {
 		HashMap<Integer, User> hashmap = new HashMap<>();
 		try{
 			String myDriver = "org.gjt.mm.mysql.Driver";
@@ -193,7 +197,7 @@ public class SockServ {
 	}
 
 
-	private static void updateTable(User newUser) {
+	public static void updateTable(User newUser) {
 		try{
 			String myDriver = "org.gjt.mm.mysql.Driver";
 			String myUrl = "jdbc:mysql://localhost/pinger";
@@ -218,8 +222,9 @@ public class SockServ {
 			System.out.println(e);
 		}
 	}
+<<<<<<< HEAD
 */
-	private static String packageFalseResponse() {
+	public static String packageFalseResponse() {
 		return "found=false;\n";
 	}
 
@@ -237,7 +242,7 @@ public class SockServ {
 	 * associated with the user name
 	 * now search the arraylist for the friend's name
 	 */
-	private static boolean isFriend(String request, HashMap<Integer, User> hashmap) {
+	public static boolean isFriend(String request, HashMap<Integer, User> hashmap) {
 		//parse msg to id and phone number 
 		
 		String msg = request.substring(17);
@@ -261,18 +266,18 @@ public class SockServ {
 	 * value is the object itself
 	 * 
 	 */
-	private static HashMap<Integer, User> addUserToHashmap(User newUser, HashMap<Integer,User> hashmap) {
+	public static HashMap<Integer, User> addUserToHashmap(User newUser, HashMap<Integer,User> hashmap) {
 		hashmap.put(newUser.id, newUser);
 		return hashmap;
 	}
 
 	/*
 	 * breaks string into user object with the following format
-	 * "username=exampleUsername;number=1234567890;numberOfFriends=3;friend=friend1,1234567890;friend=friend2,2346573451;friend=friend3,6789123454;"
+	 * "username=exampleUsername;number=1234567890;friend=friend1,1234567890;friend=friend2,2346573451;friend=friend3,6789123454;"
 	 *  I suggest separating by semicolon, and when you get to the friends part strip everything before the equals and substring using comma
 	 */
 	
-	private static User parseNewUser(String request) {
+	public static User parseNewUser(String request) {
 		User newUser = new User();	//Create New User
 		newUser.id = id;
 
@@ -306,7 +311,7 @@ public class SockServ {
 	 * Another way is to format using some other expression, but you'll have to tell will or keving to package it the way you want
 	 */
 
-	private static boolean httpParseRequest(String request) {
+	public static boolean httpParseRequest(String request) {
 		String[] split = request.split(";"); //Split string to array by semi-colon
 		int len = split.length;
 		Pattern p = Pattern.compile("=(.*)");//create group after "=" to get value
