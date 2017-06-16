@@ -1,5 +1,6 @@
 package com.beckoningtech.fastnsafe;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -19,14 +20,15 @@ public class MessageSender {
     SMSSender smsSender;
     public static MessageSender instance;
     Context context;
-    protected MessageSender(Context context){
+    Activity activity;
+    protected MessageSender(Activity activity, Context context){
         smsSender = new SMSSender();
         this.context = context;
-
+        this.activity = activity;
     }
-    public static MessageSender getInstance(Context context){
+    public static MessageSender getInstance(Activity activity, Context context){
         if (instance==null){
-            instance = new MessageSender(context);
+            instance = new MessageSender(activity, context);
         }
         return  instance;
     }
@@ -45,7 +47,7 @@ public class MessageSender {
         }
         if (userAction.location){
             AddressSender addressSender = new AddressSender(context);
-            String location = addressSender.convertToAddress(mLongitude, mLatitude);
+            String location = addressSender.getAddress(activity);
             Log.d("HackUCSC", location);
             stringBuilder.append("Location: ").append(location).append('\n');
         }
@@ -54,7 +56,7 @@ public class MessageSender {
         String number =userAction.recipients.get(0).numbers.get(0);
         System.out.println("Number: "+number);
         if (number!=""){
-            smsSender.sendSMS(number,stringBuilder.toString());
+            smsSender.sendSMS(activity, number,stringBuilder.toString());
         }
         String email =userAction.recipients.get(0).emails.get(0);
         if (email!=""){

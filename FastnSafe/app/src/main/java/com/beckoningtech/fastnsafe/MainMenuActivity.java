@@ -37,11 +37,9 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
         mContext=this;
-        Log.d("HackUCSC","1");
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_menu_toolbar);
         setSupportActionBar(toolbar);
 
-        Log.d("HackUCSC","2");
         gridView = (GridView) findViewById(R.id.main_menu_grid_view);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -56,7 +54,7 @@ public class MainMenuActivity extends AppCompatActivity {
         gridView.setAdapter(new MainMenuUserActionAdapter(this,
                 userActions,columnWidth));
         registerForContextMenu(gridView);
-        Log.d("HackUCSC","3");
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -94,7 +92,7 @@ public class MainMenuActivity extends AppCompatActivity {
         progressDialog.show();
 
         UserAction userAction = GlobalSettings.getInstance(this).userActions.get(position);
-        MessageSender.getInstance(this).sendMessage(userAction);
+        MessageSender.getInstance(this, this).sendMessage(userAction);
         System.out.println("Sending Text");
         progressDialog.dismiss();
 
@@ -153,10 +151,8 @@ public class MainMenuActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d("HackUCSC","3");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu_action_bar, menu);
-        Log.d("HackUCSC","4");
         return true;
     }
 

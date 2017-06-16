@@ -28,7 +28,6 @@ public class SelectMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_menu);
 
-
         gridView = (GridView) findViewById(R.id.main_menu_grid_view);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -62,11 +61,11 @@ public class SelectMenuActivity extends AppCompatActivity {
         return GlobalSettings.getInstance(this).userActions.get(position);
     }
 
-    void sendMessage(int position){
-        UserAction userAction = GlobalSettings.getInstance(this).userActions.get(position);
-        MessageSender.getInstance(this).sendMessage(userAction);
-        System.out.println("Sending Text");
-    }
+//    void sendMessage(int position){
+//        UserAction userAction = GlobalSettings.getInstance(this).userActions.get(position);
+//        MessageSender.getInstance(this).sendMessage(userAction);
+//        System.out.println("Sending Text");
+//    }
 
     void openEditUserActionActivity(int position){
         Intent intent = new Intent(this, EditUserActionActivity.class);
@@ -79,6 +78,7 @@ public class SelectMenuActivity extends AppCompatActivity {
         if(resultCode == 2){
             gridView.invalidateViews();
         }
+        finish();
     }
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,

@@ -45,6 +45,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.beckoningtech.fastnsafe.MainMenuActivity" /></activity>
+        <receiver android:name="com.beckoningtech.fastnsafe.SmsSentReceiver" >
+        </receiver>
+        <receiver android:name="com.beckoningtech.fastnsafe.SmsDeliveredReceiver" >
+        </receiver>
     </application>
 
 </manifest>

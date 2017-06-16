@@ -19,10 +19,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Log.d("hackUCSC", "created AddressSender");
+        Log.d("MainActivity", "created AddressSender");
         Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
-        Log.d("HackUCSC","started MainMenuActivity");
+        Log.d("MainActivity","started MainMenuActivity");
     }
 
     @Override

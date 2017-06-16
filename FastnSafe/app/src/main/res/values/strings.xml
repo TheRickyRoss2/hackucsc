@@ -1,6 +1,6 @@
 ﻿<resources>
     <string name="app_name">Fast n Safe</string>
-    <string name="title_activity_edit_user_action">EditUserActionActivity</string>
+    <string name="title_activity_edit_user_action">Editing Action</string>
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_main_menu">Main Menu</string>
@@ -15,5 +15,5 @@
     <string name="name">Your Name</string>
     <string name="location">Your Location</string>
     <string name="time">Date and Time</string>
-    <string name="title_activity_select_menu">SelectMenuActivity</string>
+    <string name="title_activity_select_menu">Edit</string>
 </resources>

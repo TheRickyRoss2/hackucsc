@@ -1,5 +1,6 @@
 package com.beckoningtech.fastnsafe;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,6 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,12 +42,15 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
         // Should connect us when the bg activity starts
         TestForDC(GoogleApiClient input){
             googleClient = input;
-            googleClient.connect();
+            if (!input.isConnected()) {
+                googleClient.connect();
+            }
         }
 
         // Disconnect us when onStop in non bg activity happens
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("TestForDC", "Disconnecting");
             googleClient.disconnect();
         }
     }
@@ -72,14 +78,57 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
             failed = true;
         }
         if (mLastLocation != null) {
-            mLatitude = 36.997183;
-            mLongitude = -122.066880;
+            mLatitude = mLastLocation.getLatitude();
+            mLongitude = mLastLocation.getLongitude();
         }
-//        String out = convertToAddress(mLongitude,mLatitude);
-        String out = "pushLoc;5555234259;" + convertToAddress(mLongitude,mLatitude) + ";\n";
+        String out = convertToAddress(mLongitude,mLatitude);
+        Log.d("onConnected", out);
+        out = "pushLoc;5555234259;" + out + ";\n";
         // For demo purposes instead of using convertToAddr we shall use the string above
-        Log.d("HackUCSC", out);
         sendMessage(out, false, mContext);
+    }
+
+    public String getAddress(Activity activity){
+        doInBackground();
+        Calendar c = Calendar.getInstance();
+        int seconds = c.get(Calendar.SECOND);
+        if (mGoogleApiClient.isConnecting()) {
+            Toast.makeText(activity,
+                    "Getting location.",
+                    Toast.LENGTH_SHORT).show();
+            Log.d("getAddress","Before while loop");
+//            while (c.get(Calendar.SECOND) - seconds < 5) {
+//                if (mGoogleApiClient.isConnected()){
+//                    break;
+//                }
+//            }
+            Log.d("getAddress","After while loop");
+        }
+        if (!mGoogleApiClient.isConnected()){
+            Toast.makeText(activity,
+                    "Location could not be found.",
+                    Toast.LENGTH_SHORT).show();
+
+        }
+        try {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null) {
+                mLatitude = mLastLocation.getLatitude();
+                mLongitude = mLastLocation.getLongitude();
+                String out = "pushLoc;5555234259;" +
+                        convertToAddress(mLongitude,mLatitude) + ";\n";
+                Log.d("AddressSender","Location found: "+ out);
+                sendMessage(out, false, mContext);
+                return convertToAddress(mLongitude, mLatitude);
+            } else {
+                Log.d("AddressSender", "mLastLocation==null");
+                throw new SecurityException();
+            }
+        } catch (SecurityException e) {
+            Log.d("AddressSender", "Location not found.");
+            return "Unknown";
+        }
     }
 
     public String convertToAddress(double longitude, double latitude) {
@@ -114,18 +163,15 @@ public class AddressSender extends AsyncTask<Void, Void, Void> implements
 
     @Override
     protected Void doInBackground(Void... voids) {
-        if(!alreadyRan) {
             // Initialize all the variables
-            if (mGoogleApiClient == null) {
-                mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-            }
-            new TestForDC(mGoogleApiClient);
-            alreadyRan=true;
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
         }
+        new TestForDC(mGoogleApiClient);
         return null;
     }
 }

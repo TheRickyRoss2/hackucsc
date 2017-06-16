@@ -5,7 +5,7 @@ import android.media.Image;
 import java.util.ArrayList;
 
 /**
- * Created by William on 1/21/2017.
+ * Created by    William on 1/21/2017.
  */
 
 public class CheckInAction extends UserAction {
